@@ -62,7 +62,7 @@ setInterval(() => {
 
 function set(udid) {
 	const xhr = new XMLHttpRequest()
-	xhr.open("POST", "http://icy-akune-8159.fakefur.jp/set.php")
+	xhr.open("POST", "http://.../set.php")
 	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
 	const body = JSON.stringify({
 		udid: udid
