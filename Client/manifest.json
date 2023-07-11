@@ -2,7 +2,7 @@
   "description": "AbemaTV用のFireFox拡張機能です。複数台で同期視聴することができます。（通話しながら一緒に見れる）",
   "manifest_version": 2,
   "name": "AbemaSync",
-  "version": "1.0",
+  "version": "1.1",
   "icons": {
     "48": "icons/beasts-48.png"
   },
