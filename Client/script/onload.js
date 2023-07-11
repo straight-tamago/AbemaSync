@@ -6,11 +6,12 @@ setInterval(() => {
 	var video = document.querySelectorAll('.com-a-Video__video > video')[0]
 	console.log(video.currentTime)
 	const xhr = new XMLHttpRequest()
-	xhr.open("POST", "http://.../index.php")
+	xhr.open("POST", "http://icy-akune-8159.fakefur.jp/index.php")
 	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
 	const body = JSON.stringify({
 		udid: udid,
 		location: location.href,
+		title: document.title,
 		paused: video.paused,
 		currentTime: video.currentTime
 	});
@@ -20,7 +21,7 @@ setInterval(() => {
 			var dict = JSON.parse(xhr.responseText)
 			
 			if (location.href != dict["location"]) {
-				document.getElementById("move").style.display = "block"
+				movebtn("block", dict["title"])
 				video.pause()
 				move_data = dict
 			}else{
@@ -29,10 +30,12 @@ setInterval(() => {
 					video.currentTime = dict["currentTime"]
 					console.log("補正: " + lag)
 				}
-				document.getElementById("move").style.display = "none"
+				movebtn("none", "")
 				if (dict["paused"]) { video.pause() }
 				else{ video.play() }
 			}
+
+			document.getElementById("hostbtn").innerHTML = dict["udid"] == udid ? "Hostになリました" : "Hostになる"
 
 			update_status(
 				"Host_Time: "+
@@ -62,7 +65,7 @@ setInterval(() => {
 
 function set(udid) {
 	const xhr = new XMLHttpRequest()
-	xhr.open("POST", "http://.../set.php")
+	xhr.open("POST", "http://icy-akune-8159.fakefur.jp/set.php")
 	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
 	const body = JSON.stringify({
 		udid: udid
@@ -74,33 +77,63 @@ function set(udid) {
 }
 
 function init() {
-	if (document.getElementById("log") != undefined) { return } 
-	var element = document.querySelectorAll('.com-feature-area-FeatureOrganizationPlanBannerContainerView')[0]
-	element.innerHTML = ""
-	element.style.color = "#fff"
-	element.style.fontSize = "20px"
+	if (document.querySelectorAll('.com-feature-area-FeatureListSection__title')[0] == undefined) { return } 
+	if (document.getElementById("text") != undefined) { return } 
+	
+	var element = document.querySelectorAll('.com-feature-area-FeatureListSection__title')[0].parentElement
+	
+	var event_elem = element.querySelectorAll('li')[0]
+	event_elem.addEventListener('mousedown', function(e) {
+		set(udid)
+	})
 
-	let log = document.createElement('div')
-	log.setAttribute('id','log')
-	element.appendChild(log)
+	let status = document.createElement('div')
+	status.id = "status"
+	status.style.color = "#fff"
+	status.style.fontSize = "20px"
+
+	let text = document.createElement('div')
+	text.id = "text"
+	status.append(text)
+
+	let hostbtn = document.createElement('div')
+	hostbtn.id = "hostbtn"
+	hostbtn.innerHTML = "Hostになる"
+	hostbtn.style.marginTop = "5px"
+	hostbtn.style.padding = "10px"
+	hostbtn.style.fontSize = "15px"
+	hostbtn.style.textAlign = "center"
+	hostbtn.style.backgroundColor = "#202020"
+	hostbtn.addEventListener('mousedown', function(e) {
+		set(udid)
+	})
+	status.append(hostbtn)
 
 	let move = document.createElement('div')
-	move.setAttribute('id','move')
-	move.innerHTML = "移動を許可"
-	move.style.color = "#fff"
+	move.id = "move"
+	move.innerHTML = "Hostは別の動画を視聴しています。<br>移動する。"
 	move.style.display = "none"
-	move.style.padding = "20px"
+	move.style.marginTop = "5px"
+	move.style.padding = "10px"
 	move.style.fontSize = "15px"
+	move.style.textAlign = "center"
 	move.style.backgroundColor = "#202020"
 	move.addEventListener('mousedown', function(e) {
 		move.innerHTML = "移動許可済"
 		location.href = move_data["location"]
 	})
-	element.appendChild(move)
+	status.append(move)
+	
+	element.prepend(status)
+}
+
+function movebtn(display, title) {
+	document.getElementById("move").style.display = display
+	document.getElementById("move").innerHTML = "Hostは別の動画を視聴しています。<br>移動する。<p style='font-size: 10px;'>" + title + "</p>"
 }
 
 function update_status(text) {
-	var element = document.getElementById("log")
+	var element = document.getElementById("text")
 	element.innerHTML = text
 }
 
@@ -110,6 +143,7 @@ function getUniqueStr(myStrong){
 	return new Date().getTime().toString(16)  + Math.floor(strong*Math.random()).toString(16)
 }
 
-document.body.addEventListener('mousedown', function(e) {
+var event_elem = document.querySelectorAll('.com-vod-VODRecommendedContentsContainerView__player')[0]
+event_elem.addEventListener('mousedown', function(e) {
 	set(udid)
 })
