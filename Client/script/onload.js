@@ -6,7 +6,7 @@ setInterval(() => {
 	var video = document.querySelectorAll('.com-a-Video__video > video')[0]
 	console.log(video.currentTime)
 	const xhr = new XMLHttpRequest()
-	xhr.open("POST", "http://icy-akune-8159.fakefur.jp/index.php")
+	xhr.open("POST", "http://.../index.php")
 	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
 	const body = JSON.stringify({
 		udid: udid,
@@ -65,7 +65,7 @@ setInterval(() => {
 
 function set(udid) {
 	const xhr = new XMLHttpRequest()
-	xhr.open("POST", "http://icy-akune-8159.fakefur.jp/set.php")
+	xhr.open("POST", "http://.../set.php")
 	xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
 	const body = JSON.stringify({
 		udid: udid
