@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<style>
+			@media (prefers-color-scheme: dark) {
+				html, body {
+					background-color: rgb(35, 34, 43);
+					color: #fff;
+					height: 100%;
+				}
+			}
+			input[type = text]  {
+				margin-bottom: 10px;
+			}
+			button {
+				margin-top: 10px;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>サーバーURLを入力</h1>
+		<label>index.php</label>
+		<input type="text" id="indexUrl" value="http://icy-akune-8159.fakefur.jp/index.php">
+	</body>
+	<script>
+		document.getElementById("indexUrl").addEventListener('input', function(e) {
+			browser.storage.local.set({
+				indexUrl: document.getElementById("indexUrl").value
+			});
+		})
+	</script>
+</html>
