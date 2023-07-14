@@ -37,7 +37,7 @@ setInterval(() => {
 					else{ video.play() }
 				}
 	
-				document.getElementById("hostbtn").innerHTML = dict["udid"] == udid ? "Hostになリました" : "Hostになる"
+				document.getElementById("hostbtn").innerText = dict["udid"] == udid ? "Hostになリました" : "Hostになる"
 	
 				update_status(
 					"Host_Time: "+
@@ -116,7 +116,7 @@ function init() {
 
 	let hostbtn = document.createElement('div')
 	hostbtn.id = "hostbtn"
-	hostbtn.innerHTML = "Hostになる"
+	hostbtn.innerText = "Hostになる"
 	hostbtn.style.marginTop = "5px"
 	hostbtn.style.cursor = "pointer"
 	hostbtn.style.padding = "10px"
@@ -130,7 +130,7 @@ function init() {
 
 	let movebtn = document.createElement('div')
 	movebtn.id = "movebtn"
-	movebtn.innerHTML = "Hostは別の動画を視聴しています。<br>移動する。"
+	movebtn.innerText = "Hostは別の動画を視聴しています。<br>移動する。"
 	movebtn.style.display = "none"
 	movebtn.style.marginTop = "5px"
 	movebtn.style.cursor = "pointer"
@@ -139,7 +139,7 @@ function init() {
 	movebtn.style.textAlign = "center"
 	movebtn.style.backgroundColor = "#202020"
 	movebtn.addEventListener('mousedown', function(e) {
-		movebtn.innerHTML = "移動許可済"
+		movebtn.innerText = "移動許可済"
 		location.href = move_data["location"]
 	})
 	status.append(movebtn)
@@ -166,17 +166,17 @@ function init() {
 	}
 
 	if (clickButton.checked == true) {
-		buttonLabel.innerHTML = "スキップをキャンセルします"
+		buttonLabel.innerText = "スキップをキャンセルします"
 	}else{
-		buttonLabel.innerHTML = "次の動画へスキップします(デフォルト)"
+		buttonLabel.innerText = "次の動画へスキップします(デフォルト)"
 	}
 
 	clickButton.addEventListener("change", function(e){
 		if (this.checked == true) {
-			document.getElementById("buttonLabel").innerHTML = "スキップをキャンセルします"
+			document.getElementById("buttonLabel").innerText = "スキップをキャンセルします"
 			localStorage.setItem("clickLocal", this.checked = 1);
 		}else{
-			document.getElementById("buttonLabel").innerHTML = "次の動画へスキップします(デフォルト)"
+			document.getElementById("buttonLabel").innerText = "次の動画へスキップします(デフォルト)"
 			localStorage.setItem("clickLocal", this.checked = 0);
 		}
 		console.log(localStorage.getItem("clickLocal"));
@@ -187,12 +187,12 @@ function init() {
 
 function movebtn_func(display, title) {
 	document.getElementById("movebtn").style.display = display
-	document.getElementById("movebtn").innerHTML = "Hostは別の動画を視聴しています。<br>移動する。<p style='font-size: 10px;'>" + title + "</p>"
+	document.getElementById("movebtn").innerText = "Hostは別の動画を視聴しています。<br>移動する。<p style='font-size: 10px;'>" + title + "</p>"
 }
 
 function update_status(text) {
 	var element = document.getElementById("text")
-	element.innerHTML = text
+	element.innerText = text
 }
 
 function getUniqueStr(myStrong){
