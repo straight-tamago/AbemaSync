@@ -1,6 +1,6 @@
-var udid = getUniqueStr()
-set(udid)
 var move_data
+const udid = getUniqueStr()
+hostRequest(udid)
 setInterval(() => {
 	init()
 	var video = document.querySelectorAll('.com-a-Video__video > video')[0]
@@ -18,46 +18,44 @@ setInterval(() => {
 			currentTime: video.currentTime
 		});
 		xhr.onload = () => {
-			console.log(xhr.responseText)
 			if (xhr.status == 200) {
 				var dict = JSON.parse(xhr.responseText)
 				
 				if (location.href != dict["location"]) {
-					movebtn_func("block", dict["title"])
-					video.pause()
 					move_data = dict
+					video.pause()
+					movebtn_func("block", dict["title"])
 				}else{
 					var lag = Math.abs(video.currentTime - dict["currentTime"])
 					if (lag > 1) {
 						video.currentTime = dict["currentTime"]
 						console.log("補正: " + lag)
 					}
+					dict["paused"] ? video.pause() : video.play();
 					movebtn_func("none", "")
-					if (dict["paused"]) { video.pause() }
-					else{ video.play() }
 				}
 	
 				document.getElementById("hostbtn").innerText = dict["udid"] == udid ? "Hostになリました" : "Hostになる"
-	
-				update_status(
+				document.getElementById("text").innerText = (
 					"Host_Time: "+
 					dict["currentTime"] +
 					
 					"\n" +
-	
+
 					"Host_UDID: "+
 					dict["udid"] +
-	
+
 					"\n" +
-	
+
 					"Client_Time: "+
 					video.currentTime +
 					
 					"\n" +
-	
+
 					"Client_UDID: "+
 					udid
-				);
+				)
+
 			} else {
 				console.log(`Error: ${xhr.status}`)
 			}
@@ -78,7 +76,7 @@ setInterval(() => {
 	
 }, 1000);
 
-function set(udid) {
+function hostRequest(udid) {
 	browser.storage.local.get(["indexUrl"], function(data){
 		const xhr = new XMLHttpRequest()
 		xhr.open("POST", data.indexUrl+"?set=true")
@@ -96,13 +94,6 @@ function set(udid) {
 function init() {
 	if (document.querySelectorAll('.com-feature-area-FeatureListSection__title')[0] == undefined) { return } 
 	if (document.getElementById("text") != undefined) { return } 
-	
-	var element = document.querySelectorAll('.com-feature-area-FeatureListSection__title')[0].parentElement
-	
-	var event_elem = element.querySelectorAll('li')[0]
-	event_elem.addEventListener('mousedown', function(e) {
-		set(udid)
-	})
 
 	let status = document.createElement('div')
 	status.id = "status"
@@ -123,8 +114,8 @@ function init() {
 	hostbtn.style.fontSize = "15px"
 	hostbtn.style.textAlign = "center"
 	hostbtn.style.backgroundColor = "#202020"
-	hostbtn.addEventListener('mousedown', function(e) {
-		set(udid)
+	hostbtn.addEventListener('click', function(e) {
+		hostRequest(udid)
 	})
 	status.append(hostbtn)
 
@@ -137,7 +128,7 @@ function init() {
 	movebtn.style.fontSize = "15px"
 	movebtn.style.textAlign = "center"
 	movebtn.style.backgroundColor = "#202020"
-	movebtn.addEventListener('mousedown', function(e) {
+	movebtn.addEventListener('click', function(e) {
 		movebtn.innerText = "移動許可済"
 		location.href = move_data["location"]
 	})
@@ -145,6 +136,7 @@ function init() {
 
 	let move_label = document.createElement('p');
 	move_label.setAttribute("id", "move_label");
+	move_label.innerText = "Hostは別の動画を視聴しています。\n移動する。"
 	movebtn.append(move_label);
 	let move_title = document.createElement('p');
 	move_title.setAttribute("id", "move_title");
@@ -181,26 +173,31 @@ function init() {
 	clickButton.addEventListener("change", function(e){
 		if (this.checked == true) {
 			document.getElementById("buttonLabel").innerText = "スキップをキャンセルします"
-			localStorage.setItem("clickLocal", this.checked = 1);
+			localStorage.setItem("clickLocal", 1);
 		}else{
 			document.getElementById("buttonLabel").innerText = "次の動画へスキップします(デフォルト)"
-			localStorage.setItem("clickLocal", this.checked = 0);
+			localStorage.setItem("clickLocal", 0);
 		}
 		console.log(localStorage.getItem("clickLocal"));
 	})
 
-	element.prepend(status)
+	var elem = document.querySelectorAll('.com-vod-VODRecommendedContentsContainerView__player')[0]
+	elem.addEventListener('mousedown', function(e) {
+		hostRequest(udid)
+	})
+
+	var elem_parent = document.querySelectorAll('.com-feature-area-FeatureListSection__title')[0].parentElement
+	var elem = elem_parent.querySelectorAll('li')[0]
+	elem.addEventListener('mousedown', function(e) {
+		hostRequest(udid)
+	})
+
+	elem_parent.prepend(status)
 }
 
 function movebtn_func(display, title) {
 	document.getElementById("movebtn").style.display = display
-	document.getElementById("move_label").innerText = "Hostは別の動画を視聴しています。\n移動する。"
 	document.getElementById("move_title").innerText = title
-}
-
-function update_status(text) {
-	var element = document.getElementById("text")
-	element.innerText = text
 }
 
 function getUniqueStr(myStrong){
@@ -209,13 +206,9 @@ function getUniqueStr(myStrong){
 	return new Date().getTime().toString(16)  + Math.floor(strong*Math.random()).toString(16)
 }
 
-var event_elem = document.querySelectorAll('.com-vod-VODRecommendedContentsContainerView__player')[0]
-event_elem.addEventListener('mousedown', function(e) {
-	set(udid)
-})
-
 browser.storage.local.get(["indexUrl"], function(data){
 	if (data.indexUrl == undefined) {
 		alert("AbemaSync: 設定画面からサーバーURLを指定する必要があります。")
+		location.href = "about:addons"
 	}
 })
