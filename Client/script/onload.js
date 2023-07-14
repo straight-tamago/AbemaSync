@@ -43,17 +43,17 @@ setInterval(() => {
 					"Host_Time: "+
 					dict["currentTime"] +
 					
-					"<br>" +
+					"\n" +
 	
 					"Host_UDID: "+
 					dict["udid"] +
 	
-					"<br>" +
+					"\n" +
 	
 					"Client_Time: "+
 					video.currentTime +
 					
-					"<br>" +
+					"\n" +
 	
 					"Client_UDID: "+
 					udid
@@ -130,7 +130,6 @@ function init() {
 
 	let movebtn = document.createElement('div')
 	movebtn.id = "movebtn"
-	movebtn.innerText = "Hostは別の動画を視聴しています。<br>移動する。"
 	movebtn.style.display = "none"
 	movebtn.style.marginTop = "5px"
 	movebtn.style.cursor = "pointer"
@@ -143,6 +142,14 @@ function init() {
 		location.href = move_data["location"]
 	})
 	status.append(movebtn)
+
+	let move_label = document.createElement('p');
+	move_label.setAttribute("id", "move_label");
+	movebtn.append(move_label);
+	let move_title = document.createElement('p');
+	move_title.setAttribute("id", "move_title");
+	move_title.style.fontSize = "10px"
+	movebtn.append(move_title);
 
 	let clickButton = document.createElement('input');
 	clickButton.setAttribute("type", "checkbox");
@@ -187,7 +194,8 @@ function init() {
 
 function movebtn_func(display, title) {
 	document.getElementById("movebtn").style.display = display
-	document.getElementById("movebtn").innerText = "Hostは別の動画を視聴しています。<br>移動する。<p style='font-size: 10px;'>" + title + "</p>"
+	document.getElementById("move_label").innerText = "Hostは別の動画を視聴しています。\n移動する。"
+	document.getElementById("move_title").innerText = title
 }
 
 function update_status(text) {
@@ -204,4 +212,10 @@ function getUniqueStr(myStrong){
 var event_elem = document.querySelectorAll('.com-vod-VODRecommendedContentsContainerView__player')[0]
 event_elem.addEventListener('mousedown', function(e) {
 	set(udid)
+})
+
+browser.storage.local.get(["indexUrl"], function(data){
+	if (data.indexUrl == undefined) {
+		alert("AbemaSync: 設定画面からサーバーURLを指定する必要があります。")
+	}
 })
